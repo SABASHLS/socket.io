@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>signup</title>
+    <link href="/css/bootstrap.css" rel="stylesheet" />
+    <script src="/js/angular.min.js"></script>
+	    <script src="/js/signup.js"></script>
+    </head>
+	<body ng-app="ctrlApp" ng-controller="sign-Ctrl">	 
+        
+    <label for="inputEmail3">Firstname</label>
+      <input type="text" ng-model="firstname" placeholder="Firstname"><br>		 
+ 
+    <label for="inputEmail3">Lastname</label>
+      <input type="text" ng-model="lastname" placeholder="Lastname"><br>
+    
+    <label for="inputEmail3">Email</label>
+      <input type="text" ng-model="email" placeholder="Email"><br>
+   
+    <label for="inputPassword3" >Password</label>
+      <input type="password" ng-model="password" placeholder="Password"><br>
+   
+    <label for="inputPassword3">Confirm Password</label>
+      <input type="password" ng-model="confirmpassword" placeholder="Password"><br>
+        
+      <button type="submit" id="register" ng-click="signup()">Register</button>
+        <a href="/"><input type="button" id="signin" class="m-btn blue" value="Cancel" /></a>
+    </div>
+  </div>		
+</form>
+</div>
+</div>
+</div>		

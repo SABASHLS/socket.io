@@ -1,0 +1,56 @@
+<html>
+<head>
+<script type="text/javascript" src="js/adapter.js"></script>
+<script type="text/javascript">
+
+ var pc=null;
+    function stopCam()
+    {
+         window.localstream.stop();
+    }
+    function startCam()
+    {
+     getUserMedia({audio:true,video:true},function(stream){
+               console.log(stream);
+    var source=document.getElementById('source');
+	 source.src=URL.createObjectURL(stream);
+    window.localstream=stream;
+         pc.addStream(stream);
+         pc.createOffer(function(offer){
+             console.log(offer);
+         },function(err){},{OfferToReceiveAudio:true,OfferToReceiveVideo:true});
+},function(err){
+	console.log(err);
+	
+});   
+    }
+    
+    function pause()
+    {
+        window.localstream.getVideoTracks()[0].enabled=false;
+    }
+    
+    function play()
+    {
+        window.localstream.getVideoTracks()[0].enabled=true;
+    }
+    var iceServers={'iceServers': [{'url': 'stun:stun.services.mozilla.com'}, {'url': 'stun:stun.l.google.com:19302'}]};
+    function startChat()
+    {
+        pc=new RTCPeerConnection(iceServers);
+        pc.onicecandidate=function(candidate){
+            console.log(candidate);
+        };
+    }
+    
+</script>
+</head>
+<body>
+    <button onclick="startChat()">StartChat</button>
+    <button onclick="startCam()">StartCam</button>
+    <button onclick="stopCam()">StopCam</button>
+    <button onclick="pause()">Pause</button>
+    <button onclick="play()">Play</button>
+	<video id="source" autoplay mute></video>
+	</body>
+</html>

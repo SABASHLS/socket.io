@@ -1,0 +1,127 @@
+<html>
+<head>
+<script type="text/javascript" src="js/adapter.js"></script>
+    <script type="text/javascript" src="socket.io/socket.io.js"></script>
+<script type="text/javascript">
+var socket=io('http://192.168.1.17:2222');
+ var pc=null;
+    function stopCam()
+    {
+         window.localstream.stop();
+    }
+    
+    //start of the video cam
+    function startCam()
+    {
+     getUserMedia({audio:true,video:true},function(stream){
+     console.log(stream);
+     var source=document.getElementById('source');
+	 source.src=URL.createObjectURL(stream);
+     window.localstream=stream;
+         pc.addStream(stream);
+         pc.createOffer(function(offer){
+             console.log(offer);
+             pc.setLocalDescription(offer);
+             socket.emit('webrtc',offer);
+         },function(err){},mediaConstraints);
+         
+           pc.onicecandidate=function(candidate){
+            console.log(candidate);
+           
+            socket.emit('webrtc',candidate.candidate);
+        };
+},function(err){
+	console.log(err);	
+});   
+    }
+    
+    var mediaConstraints = {
+  'mandatory': {
+    'OfferToReceiveAudio':true, 
+    'OfferToReceiveVideo':true
+  }
+};
+    
+    function pause()
+    {
+        window.localstream.getVideoTracks()[0].enabled=false;
+    }
+    
+    function play()
+    {
+        window.localstream.getVideoTracks()[0].enabled=true;
+    }
+    
+    var iceServers={'iceServers': [{'url': 'stun:stun.services.mozilla.com'}, {'url': 'stun:stun.l.google.com:19302'}]};
+    
+    function startChat()
+    {
+        pc=new RTCPeerConnection(iceServers);
+        pc.onaddstream=function(stream)
+        {
+            console.log(stream.stream);
+            var source=document.getElementById('video');
+	        source.src=URL.createObjectURL(stream.stream);
+        }
+    }
+    
+    function startChatA(data)
+    {
+        pc=new RTCPeerConnection(iceServers);
+        pc.onaddstream=function(stream)
+        {
+         var source=document.getElementById('video');
+	 source.src=URL.createObjectURL(stream.stream);
+        }
+        pc.onicecandidate=function(candidate){
+           // console.log(candidate);
+            socket.emit('webrtc',candidate.candidate);
+        };
+        getUserMedia({audio:true,video:true},function(stream){
+               console.log(stream);
+    var source=document.getElementById('source');
+	       source.src=URL.createObjectURL(stream);
+            window.localstream=stream;
+         pc.addStream(stream);
+            pc.setRemoteDescription(new RTCSessionDescription(data));
+         pc.createAnswer(function(answer){
+             console.log(answer);
+             pc.setLocalDescription(answer);
+             socket.emit('webrtc',answer);
+         },function(err){},mediaConstraints);
+},function(err){
+	console.log(err);
+});   
+    }
+    
+    socket.on('webrtc-msg',function(data){
+        if(data)
+        {
+             if(data.type=='offer')
+        {
+            startChatA(data);
+        }
+            else if(data.type=='answer')
+        {
+            pc.setRemoteDescription((new RTCSessionDescription(data)));
+        }
+            else if(data.candidate)
+        {
+                console.log(data);
+                var candidate = new RTCIceCandidate(data);
+                pc.addIceCandidate(candidate); 
+        }
+        }
+    });   
+</script>
+</head>
+<body>
+    <button onclick="startChat()">StartChat</button>
+    <button onclick="startCam()">StartCam</button>
+    <button onclick="stopCam()">StopCam</button>
+    <button onclick="pause()">Pause</button>
+    <button onclick="play()">Play</button>
+	<video id="source" autoplay mute></video>
+    <video id="video" autoplay mute  style="width: 150px;height: 150;margin: 0px 0px -18px -157px;"></video>
+</body>
+</html>

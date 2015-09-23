@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Login</title>
+     <link href="/css/bootstrap.css" rel="stylesheet" />
+    <script type="text/javascript" src="js/adapter.js"></script>
+  <script src="/js/socket.io.js"></script>
+<script src="/js/angular.min.js"></script>
+<script src="/js/app.js"></script>
+	
+</head>
+	<body ng-app="chatApp" ng-controller="Ctrlchat">	
+        <a href="/signout"><input type="button" class="btn btn-danger" value="Signout" /></a>
+   <div class="container">
+   <!-- <button ng-click="startCam()">StartCam</button> -->
+       <div>
+	<video id="video" ng-show='source' autoplay mute></video>
+    <video id="source" ng-show='video' autoplay muted='true'  style="width: 150px;height: 150;margin: 0px 0px 0px -155px;"></video>
+           <b ng-show='name'> {{email_id}} is calling</b><br>
+       <button ng-show='acpt' class="btn btn-success" ng-click='accept()' style="border-radius: 33px;">Accept</button>
+       <button ng-show='decln' class="btn btn-danger" ng-click='decline()' style="border-radius: 33px;">Decline</button>
+       <button ng-show='cutcal' class="btn btn-danger" ng-click='cutcall()' style="border-radius: 33px;">Decline</button>
+           </div>
+<div class="row " style="padding-top:40px;">
+    <h3 class="text-center" >SOCKET.IO CHAT EXAMPLE </h3>
+    <br /><br />
+    <div class="col-md-8">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+             <b> me and {{ user }}</b>
+            </div>
+            <div class="panel-body" style="overflow:scroll;width:747px;height:271px;">
+                              <ul class="media-list" ng-repeat="message in msg">
+                                  <li class="media">
+                                        <div class="media-body">
+                                            <div class="media">                                               
+                                                <div class="media-body">
+                                                    <b> {{ message.name }} </b> :<p>{{ message.msg}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+            </div>
+                                <div class="panel-footer">
+                                        <div class="input-group">
+                                    <input type="text" class="form-control" ng-model="message" placeholder="Enter Message" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-info" ng-click="send()">SEND</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    <div class="col-md-4">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+               ONLINE USERS
+            </div>
+            <div class="panel-body">
+                <ul class="media-list" ng-repeat="onuser in onusers">
+
+                                    <li class="media">
+                                        
+                                        <div class="media-body">
+                                                
+                                            <div class="media">
+                                                <button class="btn btn-success" ng-click="test(onuser)">
+                                                    {{ onuser }}
+                                                </button>
+                                                <div class="media-body" >
+                                                </div>
+                                            </div>
+                                      </div>
+                                 </li>
+                            </ul>
+                       </div>
+                  </div>
+              </div>
+         </div>
+    </div>
+</body>
+</html>
